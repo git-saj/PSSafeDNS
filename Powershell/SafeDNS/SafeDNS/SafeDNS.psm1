@@ -78,6 +78,7 @@ Function Get-SafeDNSRecord {
             Domain = $res.name
             Type = $res.type
             Content = $res.content
+            Updated = $res.Updated_at
         }
     }
 
