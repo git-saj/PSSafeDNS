@@ -76,7 +76,7 @@ Function Get-SafeDNSRecord {
         $object_get += [PSCustomObject]@{
             ID = $res.id
             Domain = $res.name
-            RecordType = $res.type
+            Type = $res.type
             Content = $res.content
         }
     }
