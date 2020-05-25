@@ -69,7 +69,6 @@ Function Get-SafeDNSRecord {
         $body_get_record_hash.Add("content", "$Content")
     }
 
-    
     $result = Invoke-RestMethod -Method Get -Uri $get_url -Headers $headers -Body $body_get_record_hash -ContentType 'application/json'
 
     foreach ($res in $result.data) {
@@ -81,10 +80,24 @@ Function Get-SafeDNSRecord {
             Updated = $res.Updated_at
         }
     }
+    
+    while ($result.meta.pagination.links.next) {
+        $result = Invoke-RestMethod -Method Get -Uri $result.meta.pagination.links.next -Headers $headers -ContentType 'application/json'
+
+        foreach ($res in $result.data) {
+            $object_get += [PSCustomObject]@{
+                ID = $res.id
+                Domain = $res.name
+                Type = $res.type
+                Content = $res.content
+                Updated = $res.Updated_at
+            }
+        }
+    }
 
     return $object_get
 
-}
+} 
 
 Function New-SafeDNSRecord {
     [CmdletBinding()]
