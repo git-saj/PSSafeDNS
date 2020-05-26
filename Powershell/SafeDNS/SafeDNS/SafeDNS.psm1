@@ -144,7 +144,7 @@ Function New-SafeDNSRecord {
 Function Remove-SafeDNSRecord {
     [cmdletbinding()]
     Param (
-        [Parameter()]
+        [Parameter(Mandatory=$true)]
         [string]
         $ID,
         [Parameter()]
@@ -164,16 +164,19 @@ Function Remove-SafeDNSRecord {
         $APIKey
     )
 
+    if (!$ID) {
+        Write-Output "No record ID supplied"
+        return
+    }
+
     $headers = @{"Authorization"="$APIKey"}
     
     $get_record_hash = @{
         DNSZone = $DNSZone
         APIKey = $APIKey
+        ID = $id
     }
 
-    if ($ID) {
-        $get_record_hash.Add("id", "$ID")
-    }
     if ($Domain) {
         $get_record_hash.Add("domain", "$Domain")
     }
