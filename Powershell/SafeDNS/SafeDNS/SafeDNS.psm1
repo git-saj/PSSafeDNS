@@ -22,7 +22,6 @@ Function Get-SafeDNSRecord {
 	    System.String
 	    .OUTPUTS
 	    System.String
-	    .NOTES
 	    .LINK
 	    https://sajbox.co.uk
 	#>
