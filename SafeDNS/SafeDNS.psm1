@@ -47,8 +47,6 @@ Function Get-SafeDNSRecord {
         $APIKey
     )
 
-
-
     $object_get = @()
 
     if ($global:APIKey) {
@@ -197,9 +195,7 @@ Function Remove-SafeDNSRecord {
     
     Write-Output "Deleting record $rid"
     $del_url = "https://api.ukfast.io/safedns/v1/zones/$DNSZone/records/$rid"
-    Invoke-RestMethod -Method Delete -Uri $del_url -Headers $headers -ContentType 'application/json' | Out-Null
-
-    
+    Invoke-RestMethod -Method Delete -Uri $del_url -Headers $headers -ContentType 'application/json' | Out-Null 
 
 }
 
@@ -251,8 +247,7 @@ Function Set-SafeDNSRecord {
     $result_id = $result.data.id
 
     Write-Output "Content updated for record ID: $result_id to: $Content"
-
-    
+ 
 }
 
 Function Set-SafeDNSAPIKey {
