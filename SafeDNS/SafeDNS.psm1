@@ -42,14 +42,22 @@ Function Get-SafeDNSRecord {
         [Parameter()]
         [string]
         $Content,
-        [Parameter(Mandatory=$true)]
+        [Parameter()]
         [string]
         $APIKey
     )
 
+
+
     $object_get = @()
 
-    $headers = @{"Authorization"="$APIKey"}
+    if ($global:APIKey) {
+        $headers = @{"Authorization"="$global:APIKey"}
+    }
+
+    if ($APIKey) {
+        $headers = @{"Authorization"="$APIKey"}
+    }
 
     $get_url = "https://api.ukfast.io/safedns/v1/zones/$DNSZone/records"
 
@@ -113,12 +121,18 @@ Function New-SafeDNSRecord {
         [Parameter(Mandatory=$true)]
         [string]
         $Content,
-        [Parameter(Mandatory=$true)]
+        [Parameter()]
         [string]
         $APIKey
     )
 
-    $headers = @{"Authorization"="$APIKey"}
+    if ($global:APIKey) {
+        $headers = @{"Authorization"="$global:APIKey"}
+    }
+
+    if ($APIKey) {
+        $headers = @{"Authorization"="$APIKey"}
+    }
 
     $post_url = "https://api.ukfast.io/safedns/v1/zones/$DNSZone/records"
 
@@ -147,19 +161,10 @@ Function Remove-SafeDNSRecord {
         [Parameter(Mandatory=$true)]
         [string]
         $ID,
-        [Parameter()]
-        [string]
-        $Domain,
         [Parameter(Mandatory=$true)]
         [string]
         $DNSZone,
         [Parameter()]
-        [string]
-        $Type,
-        [Parameter()]
-        [string]
-        $Content,
-        [Parameter(Mandatory=$true)]
         [string]
         $APIKey
     )
@@ -169,32 +174,30 @@ Function Remove-SafeDNSRecord {
         return
     }
 
-    $headers = @{"Authorization"="$APIKey"}
-    
-    $get_record_hash = @{
-        DNSZone = $DNSZone
-        APIKey = $APIKey
-        ID = $id
+    if ($global:APIKey) {
+        $headers = @{"Authorization"="$global:APIKey"}
+        $get_record_hash = @{
+            DNSZone = $DNSZone
+            APIKey = $global:APIKey
+            ID = $id
+        }
     }
 
-    if ($Domain) {
-        $get_record_hash.Add("domain", "$Domain")
+    if ($APIKey) {
+        $headers = @{"Authorization"="$APIKey"}
+        $get_record_hash = @{
+            DNSZone = $DNSZone
+            APIKey = $APIKey
+            ID = $id
+        }
     }
-    if ($Type) {
-        $get_record_hash.Add("type", "$Type")
-    }
-    if ($Content) {
-        $get_record_hash.Add("content", "$Content")
-    }
+    
     $record = Get-SafeDNSRecord @get_record_hash
+    $rid = $record.id
     
-    
-
-    foreach ($rid in $record.id) {
-        Write-Output "Deleting record $rid"
-        $del_url = "https://api.ukfast.io/safedns/v1/zones/$DNSZone/records/$rid"
-        Invoke-RestMethod -Method Delete -Uri $del_url -Headers $headers -ContentType 'application/json'
-    }
+    Write-Output "Deleting record $rid"
+    $del_url = "https://api.ukfast.io/safedns/v1/zones/$DNSZone/records/$rid"
+    Invoke-RestMethod -Method Delete -Uri $del_url -Headers $headers -ContentType 'application/json' | Out-Null
 
     
 
@@ -218,12 +221,18 @@ Function Set-SafeDNSRecord {
         [Parameter(Mandatory=$true)]
         [string]
         $Content,
-        [Parameter(Mandatory=$true)]
+        [Parameter()]
         [string]
         $APIKey
     )
 
-    $headers = @{"Authorization"="$APIKey"}
+    if ($global:APIKey) {
+        $headers = @{"Authorization"="$global:APIKey"}
+    }
+
+    if ($APIKey) {
+        $headers = @{"Authorization"="$APIKey"}
+    }
 
     $patch_url = "https://api.ukfast.io/safedns/v1/zones/$DNSZone/records/$id"
 
@@ -244,4 +253,16 @@ Function Set-SafeDNSRecord {
     Write-Output "Content updated for record ID: $result_id to: $Content"
 
     
+}
+
+Function Set-SafeDNSAPIKey {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]
+        $APIKey
+    )
+
+    $global:APIKey = $APIKey
+   
 }
