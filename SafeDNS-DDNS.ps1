@@ -11,7 +11,7 @@ param (
     $APIKey
 
 )
-Import-Module .\PSSafeDNS.psm1
+Import-Module $PSScriptRoot\PSSafeDNS.psm1
 
 Function Get-CurrentIP {
     (Invoke-WebRequest ipv4.icanhazip.com).content.trim()
